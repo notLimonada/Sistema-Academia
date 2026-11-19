@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Entrar · Academia Fit{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-3">Entrar</h1>
+        <form method="post" novalidate>{% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          {% include 'includes/campo.html' with campo=form.username %}
+          {% include 'includes/campo.html' with campo=form.password %}
+          <input type="hidden" name="next" value="{{ next }}">
+          <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+        <p class="text-center small mt-3 mb-0">Ainda não tem conta? <a href="{% url 'cadastro' %}">Cadastre-se</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

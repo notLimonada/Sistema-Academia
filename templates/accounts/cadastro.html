@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Cadastre-se · Academia Fit{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-3">Cadastre-se como aluno</h1>
+        <form method="post" novalidate>{% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          <div class="row">
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.first_name %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.last_name %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.username %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.email %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.cpf %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.telefone %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.data_nascimento %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.objetivo %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.password1 %}</div>
+            <div class="col-md-6">{% include 'includes/campo.html' with campo=form.password2 %}</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Criar conta</button>
+          <a class="btn btn-link" href="{% url 'login' %}">Já tenho conta</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

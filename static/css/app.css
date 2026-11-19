@@ -1,0 +1,3 @@
+.navbar-brand { letter-spacing: .3px; }
+.card { border-radius: .75rem; }
+.table > :not(caption) > * > * { vertical-align: middle; }
