@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Início · Academia Fit{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Olá, {{ user.first_name|default:user.username }}!</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h6 text-body-secondary">Matrícula</h2>
+      {% if matricula %}
+        <p class="fs-5 fw-bold mb-1">{{ matricula.plano.nome }}</p>
+        <p class="mb-1 small">Válida até {{ matricula.data_fim|date:"d/m/Y" }}</p>
+        <span class="badge text-bg-success">{{ matricula.dias_restantes }} dias restantes</span>
+      {% else %}
+        <p class="mb-0 text-danger">Sem matrícula ativa. Procure a recepção.</p>
+      {% endif %}
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h6 text-body-secondary">Próximo pagamento</h2>
+      {% if proximo %}
+        <p class="fs-5 fw-bold mb-1">R$ {{ proximo.valor|floatformat:2 }}</p>
+        <p class="mb-1 small">Vencimento em {{ proximo.data_vencimento|date:"d/m/Y" }}</p>
+        {% if proximo.em_atraso %}<span class="badge text-bg-danger">Em atraso</span>{% else %}<span class="badge text-bg-warning">Pendente</span>{% endif %}
+      {% else %}
+        <p class="mb-0 text-success">Nenhum pagamento pendente.</p>
+      {% endif %}
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h6 text-body-secondary">Meu perfil</h2>
+      <p class="mb-1">{{ aluno.idade }} anos · {{ aluno.get_objetivo_display }}</p>
+      <p class="mb-0 small">{{ aluno.turmas.count }} turma(s) inscrita(s)</p>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <h2 class="h5">Meus pagamentos</h2>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead><tr><th>Vencimento</th><th>Valor</th><th>Pago em</th><th>Situação</th></tr></thead>
+        <tbody>
+        {% for p in pagamentos %}
+          <tr>
+            <td>{{ p.data_vencimento|date:"d/m/Y" }}</td>
+            <td>R$ {{ p.valor|floatformat:2 }}</td>
+            <td>{{ p.data_pagamento|date:"d/m/Y"|default:"-" }}</td>
+            <td>{% if p.status == 'PAG' %}<span class="badge text-bg-success">Pago</span>
+                {% elif p.status == 'CAN' %}<span class="badge text-bg-secondary">Cancelado</span>
+                {% elif p.em_atraso %}<span class="badge text-bg-danger">Em atraso</span>
+                {% else %}<span class="badge text-bg-warning">Pendente</span>{% endif %}</td>
+          </tr>
+        {% empty %}<tr><td colspan="4" class="text-body-secondary">Nenhum pagamento registrado.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <h2 class="h5">Minhas turmas</h2>
+    <ul class="list-group mb-4">
+      {% for t in turmas %}
+        <li class="list-group-item">{{ t.modalidade }} · {{ t.get_dia_semana_display }} {{ t.horario_inicio|time:"H:i" }}
+          <div class="small text-body-secondary">{{ t.sala.nome }} · {{ t.instrutor }}</div></li>
+      {% empty %}<li class="list-group-item text-body-secondary">Você não está inscrito em nenhuma turma. <a href="{% url 'portal:aluno_turmas' %}">Ver turmas</a></li>{% endfor %}
+    </ul>
+    <h2 class="h5">Últimas visitas</h2>
+    <ul class="list-group">
+      {% for f in frequencias %}
+        <li class="list-group-item d-flex justify-content-between"><span>{{ f.entrada|date:"d/m/Y H:i" }}</span><span class="text-body-secondary">{{ f.duracao|default:"-" }}</span></li>
+      {% empty %}<li class="list-group-item text-body-secondary">Sem registros de frequência.</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

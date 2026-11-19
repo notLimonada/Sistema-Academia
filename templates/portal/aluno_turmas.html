@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Turmas · Academia Fit{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Turmas disponíveis</h1>
+{% if not matricula %}
+  <div class="alert alert-warning">Você precisa de uma matrícula ativa para se inscrever em turmas.</div>
+{% endif %}
+<div class="table-responsive">
+  <table class="table align-middle">
+    <thead><tr><th>Modalidade</th><th>Dia / horário</th><th>Instrutor</th><th>Sala</th><th>Vagas</th><th></th></tr></thead>
+    <tbody>
+    {% for t in turmas %}
+      <tr>
+        <td>{{ t.modalidade }}</td>
+        <td>{{ t.get_dia_semana_display }} {{ t.horario_inicio|time:"H:i" }}–{{ t.horario_fim|time:"H:i" }}</td>
+        <td>{{ t.instrutor }}</td><td>{{ t.sala.nome }}</td>
+        <td><span class="ocupadas">{{ t.ocupadas }}</span>/{{ t.vagas }}</td>
+        <td class="text-end">
+          {% if t.pk in inscritas %}
+            <button type="button" class="btn btn-sm btn-outline-danger btn-turma" data-url="{% url 'portal:turma_alternar' t.pk %}" data-bloqueado="false">Cancelar inscrição</button>
+          {% elif t.ocupadas >= t.vagas %}
+            <button type="button" class="btn btn-sm btn-secondary btn-turma" data-url="{% url 'portal:turma_alternar' t.pk %}" data-bloqueado="true" disabled>Lotada</button>
+          {% else %}
+            <button type="button" class="btn btn-sm btn-primary btn-turma" data-url="{% url 'portal:turma_alternar' t.pk %}" data-bloqueado="false">Inscrever-se</button>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="6" class="text-body-secondary">Nenhuma turma disponível.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
