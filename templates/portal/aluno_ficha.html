@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Minha ficha · Academia Fit{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Minha ficha de treino</h1>
+{% if ficha %}
+  <p class="text-body-secondary">Objetivo: {{ ficha.objetivo }} · Instrutor: {{ ficha.instrutor }} · Desde {{ ficha.data_inicio|date:"d/m/Y" }}</p>
+  <div class="row g-3">
+    {% for divisao, itens in grupos %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header fw-bold">{{ divisao }}</div>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead><tr><th>Exercício</th><th>Séries</th><th>Reps</th><th>Carga</th></tr></thead>
+            <tbody>
+              {% for i in itens %}
+              <tr><td>{{ i.exercicio }}</td><td>{{ i.series }}</td><td>{{ i.repeticoes }}</td><td>{{ i.carga_kg|floatformat:0 }} kg</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-info">Você ainda não tem uma ficha de treino ativa. Fale com um instrutor.</div>
+{% endif %}
+{% endblock %}

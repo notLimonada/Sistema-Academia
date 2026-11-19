@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Minhas turmas · Academia Fit{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Olá, {{ user.first_name|default:user.username }}!</h1>
+<div class="row g-3 mb-4">
+  <div class="col-4"><div class="card text-center"><div class="card-body"><div class="fs-3 fw-bold">{{ turmas|length }}</div><div class="small text-body-secondary">Turmas ativas</div></div></div></div>
+  <div class="col-4"><div class="card text-center"><div class="card-body"><div class="fs-3 fw-bold">{{ total_alunos }}</div><div class="small text-body-secondary">Alunos</div></div></div></div>
+  <div class="col-4"><div class="card text-center"><div class="card-body"><div class="fs-3 fw-bold">{{ total_fichas }}</div><div class="small text-body-secondary">Fichas ativas</div></div></div></div>
+</div>
+
+<h2 class="h5">Minhas turmas</h2>
+<div class="accordion mb-4" id="turmas">
+  {% for t in turmas %}
+  <div class="accordion-item">
+    <h3 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t{{ t.pk }}">
+        {{ t.modalidade }} · {{ t.get_dia_semana_display }} {{ t.horario_inicio|time:"H:i" }} · {{ t.sala.nome }}
+        <span class="badge text-bg-secondary ms-2">{{ t.inscricoes.all|length }}/{{ t.vagas }}</span>
+      </button>
+    </h3>
+    <div id="t{{ t.pk }}" class="accordion-collapse collapse" data-bs-parent="#turmas">
+      <div class="accordion-body">
+        {% for i in t.inscricoes.all %}{{ i.aluno }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-body-secondary">Nenhum aluno inscrito.</span>{% endfor %}
+      </div>
+    </div>
+  </div>
+  {% empty %}<p class="text-body-secondary">Você não tem turmas ativas.</p>{% endfor %}
+</div>
+
+<div class="d-flex justify-content-between align-items-center">
+  <h2 class="h5 mb-0">Fichas de treino ativas</h2>
+  {% if perms.treinos.add_fichatreino %}<a class="btn btn-sm btn-primary" href="{% url 'admin:treinos_fichatreino_add' %}">Nova ficha</a>{% endif %}
+</div>
+<div class="table-responsive mt-2">
+  <table class="table align-middle">
+    <thead><tr><th>Aluno</th><th>Objetivo</th><th>Início</th><th></th></tr></thead>
+    <tbody>
+    {% for f in fichas %}
+      <tr><td>{{ f.aluno }}</td><td>{{ f.objetivo }}</td><td>{{ f.data_inicio|date:"d/m/Y" }}</td>
+        <td class="text-end">{% if perms.treinos.change_fichatreino %}<a class="btn btn-sm btn-outline-primary" href="{% url 'admin:treinos_fichatreino_change' f.pk %}">Editar</a>{% endif %}</td></tr>
+    {% empty %}<tr><td colspan="4" class="text-body-secondary">Nenhuma ficha ativa.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

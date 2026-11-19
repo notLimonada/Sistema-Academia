@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts',
     'gestao',
     'treinos',
+    'portal',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,8 +132,10 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'accounts.Usuario'
-LOGIN_URL = '/admin/login/'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 JAZZMIN_SETTINGS = {
     'site_title': 'Academia - Admin',
@@ -143,13 +146,14 @@ JAZZMIN_SETTINGS = {
     'search_model': ['gestao.Aluno', 'accounts.Usuario'],
     'user_avatar': None,
     'topmenu_links': [
+        {'name': '← Voltar ao site', 'url': 'home'},
         {'name': 'Início', 'url': 'admin:index', 'permissions': ['auth.view_user']},
         {'model': 'gestao.Aluno'},
         {'model': 'gestao.Pagamento'},
     ],
     'order_with_respect_to': [
         'gestao', 'gestao.aluno', 'gestao.plano', 'gestao.matricula', 'gestao.pagamento',
-        'treinos', 'accounts',
+        'treinos', 'accounts', 'auth',
     ],
     'icons': {
         'accounts.Usuario': 'fas fa-user-shield',

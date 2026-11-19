@@ -7,6 +7,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from accounts.models import Usuario
+from accounts.permissoes import configurar_grupos
 from gestao.models import Aluno, Matricula, Pagamento, Plano, somar_meses
 from treinos.models import (AvaliacaoFisica, Equipamento, Exercicio, FichaTreino, Frequencia,
                             InscricaoTurma, Instrutor, ItemFicha, Modalidade, Sala, Turma)
@@ -25,8 +26,10 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **opts):
+        configurar_grupos()
         if Usuario.objects.filter(username='admin').exists():
-            self.stdout.write(self.style.WARNING('Dados já existem. Apague db.sqlite3 para recriar.'))
+            self.stdout.write(self.style.WARNING(
+                'Dados já existem; grupos de permissão atualizados. Apague db.sqlite3 para recriar.'))
             return
         random.seed(7)
         hoje = timezone.localdate()
