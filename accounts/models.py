@@ -20,6 +20,14 @@ class Usuario(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.cpf:
             self.cpf = None  # evita conflito de unique com string vazia
+        # O perfil define o nível de acesso ao painel administrativo.
+        if self.perfil == self.Perfil.ADMINISTRADOR:
+            self.is_staff = True
+            self.is_superuser = True
+        elif self.perfil in (self.Perfil.RECEPCIONISTA, self.Perfil.INSTRUTOR):
+            self.is_staff = True
+        else:
+            self.is_staff = self.is_superuser
         super().save(*args, **kwargs)
 
     def __str__(self):
